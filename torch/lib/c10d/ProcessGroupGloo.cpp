@@ -118,6 +118,11 @@ class GlooStore : public ::gloo::rendezvous::Store {
     auto value = store_->get(key);
     return std::vector<char>(value.begin(), value.end());
   }
+  virtual std::string str() const {
+      std::stringstream ss;
+      ss << "c10d::GlooStore("<<"store ="<<store_->str()<<")";
+      return ss.str();
+  }
 
   void wait(const std::vector<std::string>& keys) override {
     store_->wait(keys, Store::kDefaultTimeout);
@@ -566,9 +571,11 @@ ProcessGroupGloo::ProcessGroupGloo(
     int size,
     Options options)
     : ProcessGroup(rank, size),
+      options_(options),
       store_(new GlooStore(store)),
       stop_(false),
       collectiveCounter_(0) {
+  std::cout<<str()<<std::endl;
   auto& devices = options.devices;
   if (devices.empty()) {
     throw std::runtime_error("No device(s) specified");
@@ -588,13 +595,13 @@ ProcessGroupGloo::ProcessGroupGloo(
   //
   contexts_.reserve(options.devices.size());
   for (size_t i = 0; i < options.devices.size(); i++) {
+    std::cout<<"Init device "<<i<<": "<<options.devices[i]->str()<<std::endl;
     auto context = std::make_shared<::gloo::rendezvous::Context>(rank_, size_);
     auto store = ::gloo::rendezvous::PrefixStore(std::to_string(i), *store_);
     context->setTimeout(options.timeout);
     context->connectFullMesh(store, options.devices[i]);
     contexts_.push_back(std::move(context));
   }
-
   // Every worker thread stores the AsyncWork object it's currently
   // working on in the workInProgress_ vector. It must have size equal
   // to the number of workers such that they can simply index into it

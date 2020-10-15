@@ -22,6 +22,12 @@ class Store {
 
   virtual ~Store();
 
+  virtual std::string str() const {
+      std::stringstream ss;
+      ss << "c10d::Store()";
+      return ss.str();
+  }
+  
   virtual void set(
       const std::string& key,
       const std::vector<uint8_t>& value) = 0;

@@ -57,6 +57,20 @@ class TCPStore : public Store {
 
   virtual ~TCPStore();
 
+  virtual std::string str() const {
+      std::stringstream ss;
+      ss << "c10d::TCPStore("
+         <<", masterAddr = "<<tcpStoreAddr_
+         <<", masterPort = "<<tcpStorePort_
+         <<", numWorkers = "<<numWorkers_
+         <<", isServer = "<<isServer_
+         <<", timeout = "<<timeout_
+         <<", initKey = "<<initKey_
+         <<", regularPrefix_ = "<<regularPrefix_
+         <<")";
+      return ss.str();
+  }
+  
   void set(const std::string& key, const std::vector<uint8_t>& value) override;
 
   std::vector<uint8_t> get(const std::string& key) override;

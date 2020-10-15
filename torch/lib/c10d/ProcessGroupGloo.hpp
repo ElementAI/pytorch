@@ -129,6 +129,15 @@ class ProcessGroupGloo : public ProcessGroup {
     std::vector<std::shared_ptr<::gloo::transport::Device>> devices;
     std::chrono::milliseconds timeout;
     int threads;
+    std::string str() const {
+        std::stringstream ss;
+        ss << "c10d::ProcessGroupGloo::Options"
+            <<", threads: "<<threads
+            <<", timeout: "<<timeout.count();
+        for (size_t i = 0; i < devices.size(); i++)
+            ss<<", devices["<<i<<"]: "<<devices[i]->str();
+        return ss.str();
+    }
   };
 
   // Helper functions to create a new device object.
@@ -154,8 +163,17 @@ class ProcessGroupGloo : public ProcessGroup {
       int rank,
       int size,
       Options options = Options());
-
   virtual ~ProcessGroupGloo();
+
+  Options options_;
+  std::string str() const {
+    std::stringstream ss;
+    ss << "c10d::ProcessGroupGloo"
+        <<", rank: "<<rank_
+        <<", size: "<<size_
+        <<", options: "<<options_.str();
+    return ss.str();
+  }
 
   std::shared_ptr<ProcessGroup::Work> broadcast(
       std::vector<at::Tensor>& tensors,
