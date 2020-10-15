@@ -168,10 +168,11 @@ class ProcessGroupGloo : public ProcessGroup {
   Options options_;
   std::string str() const {
     std::stringstream ss;
-    ss << "c10d::ProcessGroupGloo"
-        <<", rank: "<<rank_
-        <<", size: "<<size_
-        <<", options: "<<options_.str();
+    ss << "c10d::ProcessGroupGloo("
+        <<"rank = "<<rank_
+        <<", size = "<<size_
+        <<", options = "<<options_.str()
+        <<")";
     return ss.str();
   }
 
