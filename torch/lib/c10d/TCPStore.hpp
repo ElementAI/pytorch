@@ -65,7 +65,7 @@ class TCPStore : public Store {
          <<", masterPort = "<<tcpStorePort_
          <<", numWorkers = "<<numWorkers_
          <<", isServer = "<<isServer_
-         <<", timeout = "<<timeout_
+         <<", timeout = "<<timeout_.count()
          <<", initKey = "<<initKey_
          <<", regularPrefix_ = "<<regularPrefix_
          <<")";
