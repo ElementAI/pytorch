@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <memory>
 #include <thread>
 #include <unordered_map>
