@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <chrono>
 #include <cstdint>
 #include <stdexcept>
@@ -27,7 +28,7 @@ class Store {
       ss << "c10d::Store()";
       return ss.str();
   }
-  
+
   virtual void set(
       const std::string& key,
       const std::vector<uint8_t>& value) = 0;

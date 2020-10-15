@@ -2,6 +2,7 @@
 
 #include <sys/types.h>
 
+#include <sstream>
 #include <mutex>
 #include <unordered_map>
 
