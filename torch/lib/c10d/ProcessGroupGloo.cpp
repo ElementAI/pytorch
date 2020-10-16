@@ -612,6 +612,7 @@ ProcessGroupGloo::ProcessGroupGloo(
   for (size_t i = 0; i < threads_.size(); i++) {
     threads_[i] = std::thread(&ProcessGroupGloo::runLoop, this, i);
   }
+  std::cout<<"[c10d::ProcessGroupGloo::ProcessGroupGloo] done!"<<std::endl;
 }
 
 ProcessGroupGloo::~ProcessGroupGloo() {
