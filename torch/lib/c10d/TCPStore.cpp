@@ -168,13 +168,12 @@ void TCPStoreDaemon::stop() {
 // or, in the case of wait
 // type of query | number of args | size of arg1 | arg1 | ...
 void TCPStoreDaemon::query(int socket) {
-  QueryType qt;
-  tcputil::recvBytes<QueryType>(socket, &qt, 1);
   std::cout<<"TCPStoreDaemon::query("
         <<"socket = "<<socket
-        <<", query_type = "<<qt
         <<")"<<std::endl;
 
+  QueryType qt;
+  tcputil::recvBytes<QueryType>(socket, &qt, 1);
   if (qt == QueryType::SET) {
     setHandler(socket);
 
@@ -279,10 +278,10 @@ void TCPStoreDaemon::checkHandler(int socket) const {
   std::vector<std::string> keys(nargs);
 
   std::cout<<"TCPStoreDaemon::checkHandler("
-        <<"socket = "<<socket
+        <<"socket = "<<socket;
   for (size_t i = 0; i < nargs; i++) {
     keys[i] = tcputil::recvString(socket);
-    std::cout<<", keys["<<i<<"] = "<<keys[i]
+    std::cout<<", keys["<<i<<"] = "<<keys[i];
   }
   std::cout<<")"<<std::endl;
   // Now we have received all the keys
@@ -298,10 +297,10 @@ void TCPStoreDaemon::waitHandler(int socket) {
   tcputil::recvBytes<SizeType>(socket, &nargs, 1);
   std::vector<std::string> keys(nargs);
   std::cout<<"TCPStoreDaemon::waitHandler("
-        <<"socket = "<<socket
+        <<"socket = "<<socket;
   for (size_t i = 0; i < nargs; i++) {
     keys[i] = tcputil::recvString(socket);
-    std::cout<<", keys["<<i<<"] = "<<keys[i]
+    std::cout<<", keys["<<i<<"] = "<<keys[i];
   }
   std::cout<<")"<<std::endl;
   if (checkKeys(keys)) {
@@ -449,7 +448,7 @@ int64_t TCPStore::getNumKeys() {
 }
 
 bool TCPStore::check(const std::vector<std::string>& keys) {
-  std::cout<<"TCPStore::check("
+  std::cout<<"TCPStore::check(";
   for (size_t i = 0; i < nkeys; i++) std::cout<<", keys["<<i<<"] = "<<keys[i];
   std::cout<<")"<<std::endl;
   tcputil::sendValue<QueryType>(storeSocket_, QueryType::CHECK);
@@ -476,7 +475,7 @@ void TCPStore::wait(const std::vector<std::string>& keys) {
 void TCPStore::wait(
     const std::vector<std::string>& keys,
     const std::chrono::milliseconds& timeout) {
-  std::cout<<"TCPStore::wait("
+  std::cout<<"TCPStore::wait(";
   for (size_t i = 0; i < nkeys; i++) std::cout<<", keys["<<i<<"] = "<<keys[i];
   std::cout<<")"<<std::endl;
   std::vector<std::string> regKeys;
