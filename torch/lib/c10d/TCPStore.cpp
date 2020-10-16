@@ -448,11 +448,11 @@ int64_t TCPStore::getNumKeys() {
 }
 
 bool TCPStore::check(const std::vector<std::string>& keys) {
+  tcputil::sendValue<QueryType>(storeSocket_, QueryType::CHECK);
+  SizeType nkeys = keys.size();
   std::cout<<"TCPStore::check(";
   for (size_t i = 0; i < nkeys; i++) std::cout<<", keys["<<i<<"] = "<<keys[i];
   std::cout<<")"<<std::endl;
-  tcputil::sendValue<QueryType>(storeSocket_, QueryType::CHECK);
-  SizeType nkeys = keys.size();
   tcputil::sendBytes<SizeType>(storeSocket_, &nkeys, 1, (nkeys > 0));
   for (size_t i = 0; i < nkeys; i++) {
     std::string regKey = regularPrefix_ + keys[i];
@@ -476,7 +476,7 @@ void TCPStore::wait(
     const std::vector<std::string>& keys,
     const std::chrono::milliseconds& timeout) {
   std::cout<<"TCPStore::wait(";
-  for (size_t i = 0; i < nkeys; i++) std::cout<<", keys["<<i<<"] = "<<keys[i];
+  for (size_t i = 0; i < keys.size(); i++) std::cout<<", keys["<<i<<"] = "<<keys[i];
   std::cout<<")"<<std::endl;
   std::vector<std::string> regKeys;
   regKeys.resize(keys.size());
