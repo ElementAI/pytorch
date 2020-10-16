@@ -1,9 +1,12 @@
 import pickle
 import torch
 import warnings
+import logging
 import contextlib
 from torch._six import string_classes
 from datetime import timedelta
+
+logger = logging.getLogger(__name__)
 
 # This module is wildcard imported from torch.distributed.
 # TODO: specify __all__
@@ -388,6 +391,7 @@ def init_process_group(backend,
     on a system that supports MPI.
 
     """
+    logger.debug("Init process group: start")
     global _pg_group_ranks
     global _backend
     global _default_pg
@@ -452,7 +456,9 @@ def init_process_group(backend,
     # barrier at the end to ensure that once we return from this method, all
     # process groups including global variables are updated correctly on all
     # ranks.
+    logger.debug("Init process group: barrier")
     barrier()
+    logger.debug("Init process group: done!")
 
 def _new_process_group_helper(world_size,
                               rank,
@@ -514,11 +520,13 @@ def _new_process_group_helper(world_size,
         prefix_store = PrefixStore(group_name, store)
 
         if backend == Backend.GLOO:
+            logger.debug("ProcessGroupGloo::ProcessGroupGloo")
             pg = ProcessGroupGloo(
                 prefix_store,
                 rank,
                 world_size,
                 timeout=timeout)
+            logger.debug("ProcessGroupGloo::ProcessGroupGloo done!")
             _pg_map[pg] = (Backend.GLOO, store)
             _pg_names[pg] = group_name
         elif backend == Backend.NCCL:
