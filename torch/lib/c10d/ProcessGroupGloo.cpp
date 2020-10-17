@@ -117,7 +117,7 @@ class GlooStore : public ::gloo::rendezvous::Store {
   std::vector<char> get(const std::string& key) override {
     std::stringstream ss;
     ss<<"c10d::GlooStore::get("<<key<<")";
-    std:cout<<ss<<std::endl;
+    std::cout<<ss.str()<<std::endl;
 
     auto value = store_->get(key);
     return std::vector<char>(value.begin(), value.end());

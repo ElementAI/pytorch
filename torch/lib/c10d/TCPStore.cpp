@@ -173,7 +173,7 @@ void TCPStoreDaemon::query(int socket) {
   ss <<"TCPStoreDaemon::query("
         <<"socket = "<<socket
         <<")";
-  //std::cout<<ss<<std::endl;
+  //std::cout<<ss.str()<<std::endl;
 
   QueryType qt;
   tcputil::recvBytes<QueryType>(socket, &qt, 1);
@@ -224,7 +224,7 @@ void TCPStoreDaemon::setHandler(int socket) {
         <<"socket = "<<socket
         <<", key = "<<key
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   // On "set", wake up all clients that have been waiting
   wakeupWaitingClients(key);
 }
@@ -236,7 +236,7 @@ void TCPStoreDaemon::addHandler(int socket) {
         <<"socket = "<<socket
         <<", key = "<<key
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   int64_t addVal = tcputil::recvValue<int64_t>(socket);
 
   if (tcpStore_.find(key) != tcpStore_.end()) {
@@ -259,7 +259,7 @@ void TCPStoreDaemon::getHandler(int socket) const {
         <<"socket = "<<socket
         <<", key = "<<key
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   auto data = tcpStore_.at(key);
   tcputil::sendVector<uint8_t>(socket, data);
 }
@@ -269,7 +269,7 @@ void TCPStoreDaemon::getNumKeysHandler(int socket) const {
   ss <<"TCPStoreDaemon::getNumKeysHandler("
         <<"socket = "<<socket
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   tcputil::sendValue<int64_t>(socket, tcpStore_.size());
 }
 
@@ -280,7 +280,7 @@ void TCPStoreDaemon::deleteHandler(int socket) {
         <<"socket = "<<socket
         <<", key = "<<key
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   auto numDeleted = tcpStore_.erase(key);
   tcputil::sendValue<int64_t>(socket, numDeleted);
 }
@@ -298,7 +298,7 @@ void TCPStoreDaemon::checkHandler(int socket) const {
     ss<<", keys["<<i<<"] = "<<keys[i];
   }
   ss<<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   // Now we have received all the keys
   if (checkKeys(keys)) {
     tcputil::sendValue<CheckResponseType>(socket, CheckResponseType::READY);
@@ -319,7 +319,7 @@ void TCPStoreDaemon::waitHandler(int socket) {
     ss<<", keys["<<i<<"] = "<<keys[i];
   }
   ss<<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   if (checkKeys(keys)) {
     tcputil::sendValue<WaitResponseType>(
         socket, WaitResponseType::STOP_WAITING);
@@ -411,7 +411,7 @@ void TCPStore::set(const std::string& key, const std::vector<uint8_t>& data) {
   ss<<"TCPStore::set("
         <<", key = "<<key
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   std::string regKey = regularPrefix_ + key;
   tcputil::sendValue<QueryType>(storeSocket_, QueryType::SET);
   tcputil::sendString(storeSocket_, regKey, true);
@@ -423,7 +423,7 @@ std::vector<uint8_t> TCPStore::get(const std::string& key) {
   ss<<"TCPStore::get("
         <<", key = "<<key
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   std::string regKey = regularPrefix_ + key;
   return getHelper_(regKey);
 }
@@ -440,7 +440,7 @@ int64_t TCPStore::add(const std::string& key, int64_t value) {
   ss<<"TCPStore::add("
         <<", key = "<<key
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   std::string regKey = regularPrefix_ + key;
   return addHelper_(regKey, value);
 }
@@ -450,7 +450,7 @@ bool TCPStore::deleteKey(const std::string& key) {
   ss<<"TCPStore::deleteKey("
         <<", key = "<<key
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   std::string regKey = regularPrefix_ + key;
   tcputil::sendValue<QueryType>(storeSocket_, QueryType::DELETE);
   tcputil::sendString(storeSocket_, regKey, true);
@@ -469,7 +469,7 @@ int64_t TCPStore::getNumKeys() {
   std::stringstream ss;
   ss<<"TCPStore::getNumKeys("
         <<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   tcputil::sendValue<QueryType>(storeSocket_, QueryType::GETNUMKEYS);
   return tcputil::recvValue<int64_t>(storeSocket_);
 }
@@ -481,7 +481,7 @@ bool TCPStore::check(const std::vector<std::string>& keys) {
   ss<<"TCPStore::check(";
   for (size_t i = 0; i < nkeys; i++) ss<<", keys["<<i<<"] = "<<keys[i];
   ss<<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   tcputil::sendBytes<SizeType>(storeSocket_, &nkeys, 1, (nkeys > 0));
   for (size_t i = 0; i < nkeys; i++) {
     std::string regKey = regularPrefix_ + keys[i];
@@ -504,10 +504,11 @@ void TCPStore::wait(const std::vector<std::string>& keys) {
 void TCPStore::wait(
     const std::vector<std::string>& keys,
     const std::chrono::milliseconds& timeout) {
+  std::stringstream ss;
   ss<<"TCPStore::wait(";
   for (size_t i = 0; i < keys.size(); i++) ss<<", keys["<<i<<"] = "<<keys[i];
   ss<<")";
-  std::cout<<ss<<std::endl;
+  std::cout<<ss.str()<<std::endl;
   std::vector<std::string> regKeys;
   regKeys.resize(keys.size());
   for (size_t i = 0; i < keys.size(); ++i) {
