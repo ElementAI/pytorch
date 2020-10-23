@@ -549,12 +549,14 @@ Example::
               int,
               bool,
               std::chrono::milliseconds>(),
+              bool,
           py::arg("host_name"),
           py::arg("port"),
           py::arg("world_size"),
           py::arg("is_master"),
           py::arg("timeout") =
-              std::chrono::milliseconds(::c10d::Store::kDefaultTimeout));
+              std::chrono::milliseconds(::c10d::Store::kDefaultTimeout),
+          py::arg("wait_workers"));
 #endif
 
   shared_ptr_class_<::c10d::PrefixStore>(module, "PrefixStore", store,
