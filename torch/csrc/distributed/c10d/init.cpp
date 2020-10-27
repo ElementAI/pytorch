@@ -556,7 +556,7 @@ Example::
           py::arg("is_master"),
           py::arg("timeout") =
               std::chrono::milliseconds(::c10d::Store::kDefaultTimeout),
-          py::arg("wait_workers"))=True;
+          py::arg("wait_workers") = true);
 #endif
 
   shared_ptr_class_<::c10d::PrefixStore>(module, "PrefixStore", store,
